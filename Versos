@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Versículos Bíblicos - Reina Valera 1960</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3c7f, #3a4e92);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .bible-icon {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem;
+            color: #f1c40f;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+            min-height: 500px;
+        }
+        
+        .verses-container {
+            flex: 3;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .verse-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid #3498db;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .verse-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .verse-card:nth-child(2) {
+            border-left-color: #2ecc71;
+        }
+        
+        .verse-card:nth-child(3) {
+            border-left-color: #9b59b6;
+        }
+        
+        .verse-text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-style: italic;
+        }
+        
+        .verse-reference {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        .controls-panel {
+            flex: 1;
+            min-width: 250px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .control-group {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .control-group h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-group h3 i {
+            color: #3498db;
+        }
+        
+        .timer-display {
+            font-size: 1.8rem;
+            text-align: center;
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+        
+        .timer-label {
+            font-size: 0.9rem;
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .music-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+        
+        .btn-outline:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .volume-slider {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .music-info {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .manual-refresh {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f1f2f6;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #ddd;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            color: #3498db;
+        }
+        
+        .loading i {
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .verse-text {
+                font-size: 1.2rem;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bible"></i> Versículos Bíblicos</h1>
+            <p>Reina Valera 1960 - Renovación cada 6 horas</p>
+            <div class="bible-icon">
+                <i class="fas fa-church"></i>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="verses-container">
+                <div class="loading" id="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Cargando versículos...
+                </div>
+                
+                <div class="verse-card" id="verse1">
+                    <div class="verse-text">En el principio creó Dios los cielos y la tierra.</div>
+                    <div class="verse-reference">Génesis 1:1</div>
+                </div>
+                
+                <div class="verse-card" id="verse2">
+                    <div class="verse-text">Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.</div>
+                    <div class="verse-reference">Juan 3:16</div>
+                </div>
+                
+                <div class="verse-card" id="verse3">
+                    <div class="verse-text">El Señor es mi pastor; nada me faltará.</div>
+                    <div class="verse-reference">Salmos 23:1</div>
+                </div>
+            </div>
+            
+            <div class="controls-panel">
+                <div class="control-group">
+                    <h3><i class="fas fa-clock"></i> Próxima Renovación</h3>
+                    <div class="timer-display" id="timer">06:00:00</div>
+                    <div class="timer-label">Los versículos se renovarán automáticamente</div>
+                    <div class="manual-refresh">
+                        <button class="btn btn-outline" id="refreshBtn">
+                            <i class="fas fa-redo"></i> Renovar Ahora
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-music"></i> Música de Fondo</h3>
+                    <div class="music-controls">
+                        <button class="btn btn-primary" id="playBtn">
+                            <i class="fas fa-play"></i> Reproducir
+                        </button>
+                        <button class="btn btn-success" id="pauseBtn">
+                            <i class="fas fa-pause"></i> Pausar
+                        </button>
+                    </div>
+                    <input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider">
+                    <div class="music-info">
+                        Música: "His Mercy Is More" - Instrumental
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-info-circle"></i> Información</h3>
+                    <p>Esta página muestra 3 versículos aleatorios de la Biblia Reina Valera 1960, renovándose automáticamente cada 6 horas.</p>
+                    <p>Actualmente hay <span id="verseCount">50</span> versículos disponibles en la base de datos.</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Versículos de la Biblia Reina Valera 1960 | Música instrumental de fondo para meditación</p>
+            <p>© 2023 - Página creada con fines espirituales</p>
+        </footer>
+    </div>
+
+    <script>
+        // Base de datos de versículos bíblicos (Reina Valera 1960)
+        const bibleVerses = [
+            { text: "En el principio creó Dios los cielos y la tierra.", reference: "Génesis 1:1" },
+            { text: "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.", reference: "Juan 3:16" },
+            { text: "El Señor es mi pastor; nada me faltará.", reference: "Salmos 23:1" },
+            { text: "Todo lo puedo en Cristo que me fortalece.", reference: "Filipenses 4:13" },
+            { text: "Y conocereis la verdad, y la verdad os hará libres.", reference: "Juan 8:32" },
+            { text: "Echad toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.", reference: "1 Pedro 5:7" },
+            { text: "Porque nada hay imposible para Dios.", reference: "Lucas 1:37" },
+            { text: "Pero los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán.", reference: "Isaías 40:31" },
+            { text: "Fiel es Dios, que no os dejará ser tentados más de lo que podéis resistir.", reference: "1 Corintios 10:13" },
+            { text: "Pero la hora viene, y ahora es, cuando los verdaderos adoradores adorarán al Padre en espíritu y en verdad.", reference: "Juan 4:23" },
+            { text: "No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.", reference: "Isaías 41:10" },
+            { text: "El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece.", reference: "1 Corintios 13:4" },
+            { text: "Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.", reference: "Mateo 11:28" },
+            { text: "Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio.", reference: "2 Timoteo 1:7" },
+            { text: "Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí.", reference: "Juan 14:6" },
+            { text: "El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.", reference: "Salmos 91:1" },
+            { text: "Y nosotros sabemos que a los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados.", reference: "Romanos 8:28" },
+            { text: "Examíname, oh Dios, y conoce mi corazón; pruébame y conoce mis pensamientos.", reference: "Salmos 139:23" },
+            { text: "Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios.", reference: "Efesios 2:8" },
+            { text: "Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.", reference: "Mateo 6:33" },
+            { text: "El nombre de Jehová es torre fuerte; a él correrá el justo, y será levantado.", reference: "Proverbios 18:10" },
+            { text: "Porque la palabra de Dios es viva y eficaz, y más cortante que toda espada de dos filos.", reference: "Hebreos 4:12" },
+            { text: "Encomienda a Jehová tu camino, y confía en él; y él hará.", reference: "Salmos 37:5" },
+            { text: "Porque donde están dos o tres congregados en mi nombre, allí estoy yo en medio de ellos.", reference: "Mateo 18:20" },
+            { text: "La paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús.", reference: "Filipenses 4:7" },
+            { text: "Y yo estoy con vosotros todos los días, hasta el fin del mundo. Amén.", reference: "Mateo 28:20" },
+            { text: "Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve.", reference: "Hebreos 11:1" },
+            { text: "No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento.", reference: "Romanos 12:2" },
+            { text: "Jehová es mi luz y mi salvación; ¿de quién temeré? Jehová es la fortaleza de mi vida; ¿de quién he de atemorizarme?", reference: "Salmos 27:1" },
+            { text: "Por tanto, si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron; he aquí todas son hechas nuevas.", reference: "2 Corintios 5:17" },
+            { text: "Clama a mí, y yo te responderé, y te enseñaré cosas grandes y ocultas que tú no conoces.", reference: "Jeremías 33:3" },
+            { text: "Porque nosotros somos colaboradores de Dios, y vosotros sois labranza de Dios, edificio de Dios.", reference: "1 Corintios 3:9" },
+            { text: "Antes, santificad a Dios el Señor en vuestros corazones, y estad siempre preparados para presentar defensa con mansedumbre y reverencia ante todo el que os demande razón de la esperanza que hay en vosotros.", reference: "1 Pedro 3:15" },
+            { text: "Pero el fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe, mansedumbre, templanza.", reference: "Gálatas 5:22-23" },
+            { text: "Y mi Dios suplirá todo lo que os falta conforme a sus riquezas en gloria en Cristo Jesús.", reference: "Filipenses 4:19" },
+            { text: "Sobre toda cosa guardada, guarda tu corazón; porque de él mana la vida.", reference: "Proverbios 4:23" },
+            { text: "Y andad en amor, como también Cristo nos amó, y se entregó a sí mismo por nosotros, ofrenda y sacrificio a Dios en olor fragante.", reference: "Efesios 5:2" },
+            { text: "Por la misericordia de Jehová no hemos sido consumidos, porque nunca decayeron sus misericordias.", reference: "Lamentaciones 3:22" },
+            { text: "Amarás al Señor tu Dios con todo tu corazón, y con toda tu alma, y con toda tu mente. Este es el primero y grande mandamiento.", reference: "Mateo 22:37-38" },
+            { text: "Y la paz de Dios gobierne en vuestros corazones, a la que asimismo fuisteis llamados en un solo cuerpo; y sed agradecidos.", reference: "Colosenses 3:15" },
+            { text: "Gozaos en el Señor siempre. Otra vez digo: ¡Gozaos!", reference: "Filipenses 4:4" },
+            { text: "Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.", reference: "Salmos 46:1" },
+            { text: "Bienaventurados los pacificadores, porque ellos serán llamados hijos de Dios.", reference: "Mateo 5:9" },
+            { text: "Poned la mira en las cosas de arriba, no en las de la tierra.", reference: "Colosenses 3:2" },
+            { text: "Bendice, alma mía, a Jehová, y no olvides ninguno de sus beneficios.", reference: "Salmos 103:2" },
+            { text: "Porque no somos nosotros los que escribimos la palabra de Dios, sino que es el Espíritu Santo el que escribe en nuestros corazones.", reference: "2 Corintios 3:3" },
+            { text: "Y conoceréis la verdad, y la verdad os hará libres.", reference: "Juan 8:32" },
+            { text: "No nos cansemos, pues, de hacer bien; porque a su tiempo segaremos, si no desmayamos.", reference: "Gálatas 6:9" },
+            { text: "Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.", reference: "Jeremías 29:11" },
+            { text: "Jehová te bendiga, y te guarde; Jehová haga resplandecer su rostro sobre ti, y tenga de ti misericordia; Jehová alce sobre ti su rostro, y ponga en ti paz.", reference: "Números 6:24-26" }
+        ];
+
+        // Variables globales
+        let audioPlayer;
+        let timerInterval;
+        let timeLeft = 6 * 60 * 60; // 6 horas en segundos
+        let isPlaying = false;
+
+        // Cuando el documento esté cargado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Actualizar contador de versículos
+            document.getElementById('verseCount').textContent = bibleVerses.length;
+            
+            // Mostrar versículos iniciales
+            displayRandomVerses();
+            
+            // Configurar controles de música
+            setupAudioPlayer();
+            
+            // Configurar temporizador
+            setupTimer();
+            
+            // Configurar botón de renovación manual
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                refreshVerses();
+            });
+            
+            // Configurar controles de música
+            document.getElementById('playBtn').addEventListener('click', function() {
+                playMusic();
+            });
+            
+            document.getElementById('pauseBtn').addEventListener('click', function() {
+                pauseMusic();
+            });
+            
+            document.getElementById('volumeSlider').addEventListener('input', function() {
+                if (audioPlayer) {
+                    audioPlayer.volume = this.value / 100;
+                }
+            });
+        });
+
+        // Función para mostrar versículos aleatorios
+        function displayRandomVerses() {
+            // Ocultar loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Obtener 3 índices aleatorios únicos
+            const indices = [];
+            while (indices.length < 3) {
+                const randomIndex = Math.floor(Math.random() * bibleVerses.length);
+                if (!indices.includes(randomIndex)) {
+                    indices.push(randomIndex);
+                }
+            }
+            
+            // Mostrar los versículos seleccionados
+            for (let i = 0; i < 3; i++) {
+                const verse = bibleVerses[indices[i]];
+                const verseCard = document.getElementById(`verse${i+1}`);
+                verseCard.querySelector('.verse-text').textContent = verse.text;
+                verseCard.querySelector('.verse-reference').textContent = verse.reference;
+            }
+        }
+
+        // Función para configurar el reproductor de audio
+        function setupAudioPlayer() {
+            // Crear elemento de audio con música instrumental de fondo
+            audioPlayer = new Audio('https://assets.mixkit.co/music/preview/mixkit-his-mercy-is-more-1005.mp3');
+            audioPlayer.loop = true;
+            audioPlayer.volume = 0.5;
+            
+            // Actualizar información de la música
+            document.querySelector('.music-info').textContent = 'Música: "His Mercy Is More" - Instrumental';
+        }
+
+        // Función para reproducir música
+        function playMusic() {
+            if (audioPlayer && !isPlaying) {
+                audioPlayer.play()
+                    .then(() => {
+                        isPlaying = true;
+                        document.getElementById('playBtn').classList.add('pulse');
+                        document.getElementById('pauseBtn').classList.remove('pulse');
+                    })
+                    .catch(error => {
+                        console.log('Error al reproducir audio:', error);
+                        alert('Para reproducir la música, por favor interactúa con la página primero (haz clic en cualquier lugar).');
+                    });
+            }
+        }
+
+        // Función para pausar música
