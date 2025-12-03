@@ -1,0 +1,164 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/>
+
+import React, { useEffect, useState } from 'react';
+
+// ----- CONFIG -----
+const MUSIC_URL =https://youtu.be/1lRSF-U0v64?si=DwYHbjgkmuh2Cuoa
+const VERSES_KEY = 'rv1960_current_verses_v1';
+const ROTATION_MS = 6 * 60 * 60 * 1000; // 6 horas
+
+/ un catálogo completo.
+const BOOKS_SAMPLE = [
+  { name: 'Juan', chapters: 21 },
+  { name: 'Salmos', chapters: 150 },
+  { name: 'Romanos', chapters: 16 },
+  { name: 'Génesis', chapters: 50 },
+  { name: 'Éxodo', chapters: 40 },
+  { name: 'Mateo', chapters: 28 },
+  { name: 'Hechos', chapters: 28 },
+  { name: 'Proverbios', chapters: 31 },
+  { name: 'Isaías', chapters: 66 },
+];
+
+. Reemplaza con más o conecta a API con licencia.
+const FALLBACK_VERSES = [
+  { ref: 'Juan 3:16', text: 'Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito...' },
+  { ref: 'Salmos 23:1', text: 'Jehová es mi pastor; nada me faltará.' },
+  { ref: 'Filipenses 4:13', text: 'Todo lo puedo en Cristo que me fortalece.' },
+  { ref: 'Proverbios 3:5', text: 'Confía en Jehová con todo tu corazón, Y no te apoyes en tu propia prudencia.' },
+  { ref: 'Mateo 5:9', text: 'Bienaventurados los pacificadores, porque ellos serán llamados hijos de Dios.' },
+];
+
+function randomInt(min, maxInclusive) {
+  return Math.floor(Math.random() * (maxInclusive - min + 1)) + min;
+}
+
+function pickRandomReferences(count = 3) {
+  const refs = new Set();
+  while (refs.size < count) {
+    const book = BOOKS_SAMPLE[randomInt(0, BOOKS_SAMPLE.length - 1)];
+    const chapter = randomInt(1, book.chapters);
+    
+    const verse = randomInt(1, 20);
+    refs.add(`${book.name} ${chapter}:${verse}`);
+  }
+  return Array.from(refs);
+}
+
+async function fetchVerseText(reference) {
+  
+  try {
+    const encoded = encodeURIComponent(reference);
+    const url = `https://bible-api.com/${encoded}?translation=rv1960`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API no disponible');
+    const data = await res.json();
+    
+    if (data.text) return { ref: data.reference || reference, text: data.text.trim() };
+    if (data.verses && data.verses.length) {
+      const txt = data.verses.map(v => v.text).join(' ').trim();
+      return { ref: data.reference || reference, text: txt };
+    }
+    throw new Error('Respuesta inesperada');
+  } catch (e) {
+    console.warn('fetchVerseText fallo para', reference, e.message);
+    return null;
+  }
+}
+
+export default function RV19603Versos() {
+  const [verses, setVerses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadOrRotate() {
+      setLoading(true);
+      const saved = JSON.parse(localStorage.getItem(VERSES_KEY) || 'null');
+      const now = Date.now();
+      if (saved && saved.timestamp && now - saved.timestamp < ROTATION_MS && Array.isArray(saved.verses)) {
+        setVerses(saved.verses);
+        setLoading(false);
+        return;
+      }
+
+      
+      const refs = pickRandomReferences(3);
+
+      
+      const results = [];
+      for (const r of refs) {
+        const v = await fetchVerseText(r);
+        if (v) results.push(v);
+      }
+
+      
+      if (results.length < 3) {
+        console.warn('Usando fallback para completar versículos');
+        
+        const needed = 3 - results.length;
+        const chosen = [];
+        
+        const usedRefs = new Set(results.map(x => x.ref));
+        for (const f of FALLBACK_VERSES) {
+          if (chosen.length >= needed) break;
+          if (!usedRefs.has(f.ref)) chosen.push(f);
+        }
+        setVerses([...results, ...chosen].slice(0, 3));
+        localStorage.setItem(VERSES_KEY, JSON.stringify({ verses: [...results, ...chosen].slice(0, 3), timestamp: now }));
+        setLoading(false);
+        return;
+      }
+
+      
+      localStorage.setItem(VERSES_KEY, JSON.stringify({ verses: results, timestamp: now }));
+      if (mounted) setVerses(results);
+      setLoading(false);
+    }
+
+    loadOrRotate();
+
+    
+    const handle = setInterval(() => {
+      
+      loadOrRotate().catch(console.error);
+    }, ROTATION_MS);
+
+    return () => {
+      mounted = false;
+      clearInterval(handle);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-emerald-900 text-white p-6">
+      <audio src={MUSIC_URL} autoPlay loop controls className="fixed bottom-4 right-4 w-64 bg-black bg-opacity-40 rounded-md" />
+
+      <div className="max-w-3xl w-full bg-white bg-opacity-5 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+        <h1 className="text-2xl md:text-3xl font-semibold mb-4">Versículos aleatorios -- Reina Valera 1960</h1>
+        <p className="text-sm text-white/70 mb-6">Se renuevan cada 6 horas. Fuente: RV1960 (si tu API lo permite).</p>
+
+        {loading ? (
+          <div className="py-12 text-center">Cargando...</div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-3">
+            {verses.map((v, i) => (
+              <article key={i} className="p-4 rounded-xl bg-white/5 border border-white/5">
+                <header className="text-xs text-white/80 mb-2">{v.ref}</header>
+                <p className="text-lg leading-relaxed">{v.text}</p>
+              </article>
+            ))}
+          </div>
+        )}
+
+        <footer className="mt-6 text-xs text-white/60">
+          Última selección: {(() => {
+            const saved = JSON.parse(localStorage.getItem(VERSES_KEY) || 'null');
+            return saved && saved.timestamp ? new Date(saved.timestamp).toLocaleString() : '--';
+          })()}
+        </footer>
+      </div>
+    </div>
+  );
+}
